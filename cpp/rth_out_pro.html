@@ -38,20 +38,20 @@
 #define rth_out_pro_constant_out
 #define rth_out_pro_runtime_fast_out
 
-#include<rth_io>
+#include&lt;rth_io&gt;
 
 #if defined(__LDBL_MAX__)
     #define LDBL_MAX_RT ((long double)__LDBL_MAX__)
 #elif defined(_MSC_VER)
     #define LDBL_MAX_RT 1.79769313486231570815e+308L
-#elif defined(__SIZEOF_LONG_DOUBLE__) && (__SIZEOF_LONG_DOUBLE__ == 4)
+#elif defined(__SIZEOF_LONG_DOUBLE__) &amp;&amp; (__SIZEOF_LONG_DOUBLE__ == 4)
     #define LDBL_MAX_RT 3.40282346638528859812e+38L
 #else
     #define LDBL_MAX_RT 1.79769313486231570815e+308L
 #endif
 
 namespace rttype{
-    static constexpr unsigned ptr_w_rt=sizeof(void*)<<1;
+    static constexpr unsigned ptr_w_rt=sizeof(void*)&lt;&lt;1;
 }
 #ifdef rth_out_pro_runtime_normal_out
 namespace rttype{
@@ -61,27 +61,27 @@ namespace rttype{
 }
 namespace out_rth{
     namespace typetrait{
-        template<typename T, typename U>
+        template&lt;typename T, typename U&gt;
         struct is_same {
         static constexpr int v=0;
         };
-        template<typename T>
-        struct is_same<T, T> {
+        template&lt;typename T&gt;
+        struct is_same&lt;T, T&gt; {
         static constexpr int v=1;
         };
         
-        template<typename T>
+        template&lt;typename T&gt;
         struct is_integer {
             static const int v=0;
         };
-        template<typename T>
-        struct is_integer<const T> : is_integer<T> {};
-        template<typename T>
-        struct is_integer<volatile T> : is_integer<T> {};
-        template<typename T>
-        struct is_integer<const volatile T> : is_integer<T> {};
+        template&lt;typename T&gt;
+        struct is_integer&lt;const T&gt; : is_integer&lt;T&gt; {};
+        template&lt;typename T&gt;
+        struct is_integer&lt;volatile T&gt; : is_integer&lt;T&gt; {};
+        template&lt;typename T&gt;
+        struct is_integer&lt;const volatile T&gt; : is_integer&lt;T&gt; {};
         #define DEFINE_INTEGER_TYPE(T) \
-        template<> struct is_integer<T> { static const int v=1;};
+        template&lt;&gt; struct is_integer&lt;T&gt; { static const int v=1;};
         DEFINE_INTEGER_TYPE(short)
         DEFINE_INTEGER_TYPE(unsigned short)
         DEFINE_INTEGER_TYPE(int)
@@ -92,20 +92,20 @@ namespace out_rth{
         DEFINE_INTEGER_TYPE(unsigned long long)
         #undef DEFINE_INTEGER_TYPE
         //UN
-        template<typename T>
+        template&lt;typename T&gt;
         struct is_unsigned_integer {
             static const int v=0;
         };
         
-        template<typename T>
-        struct is_unsigned_integer<const T> : is_unsigned_integer<T> {};
-        template<typename T>
-        struct is_unsigned_integer<volatile T> : is_unsigned_integer<T> {};
-        template<typename T>
-        struct is_unsigned_integer<const volatile T> : is_unsigned_integer<T> {};
+        template&lt;typename T&gt;
+        struct is_unsigned_integer&lt;const T&gt; : is_unsigned_integer&lt;T&gt; {};
+        template&lt;typename T&gt;
+        struct is_unsigned_integer&lt;volatile T&gt; : is_unsigned_integer&lt;T&gt; {};
+        template&lt;typename T&gt;
+        struct is_unsigned_integer&lt;const volatile T&gt; : is_unsigned_integer&lt;T&gt; {};
         
         #define DEFINE_UNSIGNED_INTEGER_TYPE(T) \
-        template<> struct is_unsigned_integer<T> { static const int v=1;};
+        template&lt;&gt; struct is_unsigned_integer&lt;T&gt; { static const int v=1;};
         
         DEFINE_UNSIGNED_INTEGER_TYPE(unsigned short)
         DEFINE_UNSIGNED_INTEGER_TYPE(unsigned int)
@@ -113,36 +113,36 @@ namespace out_rth{
         DEFINE_UNSIGNED_INTEGER_TYPE(unsigned long long)
         
         #undef DEFINE_UNSIGNED_INTEGER_TYPE
-        template<typename T>
+        template&lt;typename T&gt;
         struct is_charptr {
             static const int v=0;
         };
         
-        template<typename T>
-        struct is_charptr<T*> {
-            static const int v=is_charptr<T>::v;
+        template&lt;typename T&gt;
+        struct is_charptr&lt;T*&gt; {
+            static const int v=is_charptr&lt;T&gt;::v;
         };
-        template<>
-        struct is_charptr<char> {
+        template&lt;&gt;
+        struct is_charptr&lt;char&gt; {
             static const int v=1;
         };
-        template<>
-        struct is_charptr<const char> {
+        template&lt;&gt;
+        struct is_charptr&lt;const char&gt; {
             static const int v=1;
         };
-        template<>
-        struct is_charptr<volatile char> {
+        template&lt;&gt;
+        struct is_charptr&lt;volatile char&gt; {
             static const int v=1;
         };
-        template<>
-        struct is_charptr<const volatile char> {
+        template&lt;&gt;
+        struct is_charptr&lt;const volatile char&gt; {
             static const int v=1;
         };
         //ptr
-        template<typename T>
+        template&lt;typename T&gt;
         struct is_ptr{static constexpr int v=0;};
-        template<typename T>
-        struct is_ptr<T*>{static constexpr int v=1;};
+        template&lt;typename T&gt;
+        struct is_ptr&lt;T*&gt;{static constexpr int v=1;};
     }
 }
 
@@ -152,7 +152,7 @@ namespace out_rth{
             char* p=buf+20;
             *p=0;
             unsigned long long u;
-            if(val<0){
+            if(val&lt;0){
                 u = (unsigned long long)(-val);
                 do{
                     unsigned long long rem = u % 10;
@@ -198,7 +198,7 @@ namespace out_rth{
                 return 0;
             }
             static inline int ch(char c){
-                writer(&c,1);
+                writer(&amp;c,1);
                 return 0;
             }
             static inline int cp(const char* c){
@@ -208,15 +208,15 @@ namespace out_rth{
                 writer(c,l);
                 return 0;
             }
-            template<typename T>
+            template&lt;typename T&gt;
             static inline int vp(T* a){
                 char c[rttype::ptr_w_rt+2]={};
                 c[0]='0';
                 c[1]='x';
                 unsigned long long ax=(unsigned long long)a;
-                for(int i=0;i<rttype::ptr_w_rt;i++){
-                    int shift=(rttype::ptr_w_rt-1-i) <<2;
-                    c[2+i]=rttype::hexlist[(ax>>shift)&0xF];
+                for(int i=0;i&lt;rttype::ptr_w_rt;i++){
+                    int shift=(rttype::ptr_w_rt-1-i) &lt;&lt;2;
+                    c[2+i]=rttype::hexlist[(ax&gt;&gt;shift)&amp;0xF];
                 }
                 writer(c,rttype::ptr_w_rt+2);
                 return 0;
@@ -232,15 +232,15 @@ namespace out_rth{
                 }
                 char c[64];
                 int idx = 0;
-                bool neg = (a < 0);
+                bool neg = (a &lt; 0);
                 if (neg) a = -a;
-                if (a > LDBL_MAX_RT) {
+                if (a &gt; LDBL_MAX_RT) {
                     if (neg) writer("-INF", 4);
                     else     writer("INF", 3);
                     return 0;
                 }
                 constexpr long double ULL_MAX_P1 = 18446744073709551616.0L; //2^64
-                if (a>=ULL_MAX_P1){
+                if (a&gt;=ULL_MAX_P1){
                     if (neg) writer("-INF", 4);
                     else     writer("INF", 3);
                     return 0;
@@ -258,15 +258,15 @@ namespace out_rth{
 
                 c[idx++] = '.';
 
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i &lt; 6; i++) {
                     frac *= 10;
                     int digit = (int)frac;
                     c[idx++] = '0' ^ digit;
                     frac -= digit;
                 }
 
-                while (idx > 0 && c[idx-1] == '0') idx--;
-                if (idx > 0 && c[idx-1] == '.') idx--;
+                while (idx &gt; 0 &amp;&amp; c[idx-1] == '0') idx--;
+                if (idx &gt; 0 &amp;&amp; c[idx-1] == '.') idx--;
 
                 writer(c, idx);
                 return 0;
@@ -289,8 +289,8 @@ namespace out_rth{
         }
         #define defofn_ch(T) \
         static inline rttype::out_t outf(T a) {\
-            const char c=static_cast<char>(a);\
-            writer(&c,1);\
+            const char c=static_cast&lt;char&gt;(a);\
+            writer(&amp;c,1);\
             return {};\
         }
         defofn_fp(float);
@@ -328,7 +328,7 @@ namespace out_rth{
             else{writer("0",1);}
             return {};
         }
-        template<typename T>
+        template&lt;typename T&gt;
         static inline rttype::out_t outf(T* a){
             out_fn::vp(a);
             return {};
@@ -336,24 +336,24 @@ namespace out_rth{
     }
 }
 #define def_op_rtout_si(T) \
-static inline rttype::out_t operator<<(rttype::out_t a, T b){\
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T b){\
     out_rth::runtime::out_fn::si(b);\
     return a;\
 }
 #define def_op_rtout_ui(T) \
-static inline rttype::out_t operator<<(rttype::out_t a, T b){\
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T b){\
     out_rth::runtime::out_fn::ui(b);\
     return a;\
 }
 #define def_op_rtout_fp(T) \
-static inline rttype::out_t operator<<(rttype::out_t a, T b){\
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T b){\
     out_rth::runtime::out_fn::fp(b);\
     return a;\
 }
 #define def_op_rtout_ch(T) \
-static inline rttype::out_t operator<<(rttype::out_t a, T b){\
-    const char c=static_cast<char>(b);\
-    writer(&c,1);\
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T b){\
+    const char c=static_cast&lt;char&gt;(b);\
+    writer(&amp;c,1);\
     return a;\
 }
 def_op_rtout_si(short);
@@ -378,34 +378,34 @@ def_op_rtout_ch(unsigned char);
 #undef def_op_rtout_si
 #undef def_op_rtout_ui
 #undef def_op_rtout_ch
-template<typename T>
-static inline rttype::out_t operator<<(rttype::out_t a, T b) {
+template&lt;typename T&gt;
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T b) {
     out_rth::runtime::outf(b);
     return a;
 }
-template<typename T>
-static inline rttype::out_t operator<<(rttype::out_t a, T* b) {
+template&lt;typename T&gt;
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, T* b) {
     out_rth::runtime::out_fn::vp(b);
     return a;
 }
-static inline rttype::out_t operator<<(rttype::out_t a, char* b) {
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, char* b) {
     out_rth::runtime::out_fn::cp(b);
     return a;
 }
-static inline rttype::out_t operator<<(rttype::out_t a, const char* b) {
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, const char* b) {
     unsigned l=0;
     while (b[l]) l++;
     writer(b, l);
     return a;
 }
-static inline rttype::out_t operator<<(rttype::out_t a, rttype::out_t (*manip)(rttype::out_t)) {
+static inline rttype::out_t operator&lt;&lt;(rttype::out_t a, rttype::out_t (*manip)(rttype::out_t)) {
     return manip(a);
 }
 
 namespace rttype{
     static inline rttype::out_t endl(rttype::out_t a) {
         const char n = '\n';
-        writer(&n, 1);
+        writer(&amp;n, 1);
         return a;
     }
 
@@ -419,92 +419,92 @@ namespace rttype{
 namespace out_rth{
     namespace constant{
         using len_t=unsigned;
-        template<len_t N=256>
+        template&lt;len_t N=256&gt;
         struct constantout_t{
             char c[N]={};
             len_t l=0;//No include '\0'
             constexpr const char* c_str() const{return c;}
             constexpr len_t       size()  const{return l;}
-            template<len_t M>
-            constexpr constantout_t& operator=(const constantout_t<M>& a){
-                len_t cmP=M>N?N:M;
+            template&lt;len_t M&gt;
+            constexpr constantout_t&amp; operator=(const constantout_t&lt;M&gt;&amp; a){
+                len_t cmP=M&gt;N?N:M;
                 l=a.l;
                 len_t i=0;
-                for(;i<cmP;i++){
+                for(;i&lt;cmP;i++){
                     c[i]=a.c[i];
                 }
-                for(;i<N;i++){
+                for(;i&lt;N;i++){
                     c[i]=0;
                 }
-                l=(a.l<N)? a.l:N;
+                l=(a.l&lt;N)? a.l:N;
                 return (*this);
             }
         };
         //+
-        template<len_t N,len_t M>
-        static inline constexpr constantout_t<N+M> operator+(constantout_t<N> a,constantout_t<M> b){
-            constantout_t<N+M> r=a;
+        template&lt;len_t N,len_t M&gt;
+        static inline constexpr constantout_t&lt;N+M&gt; operator+(constantout_t&lt;N&gt; a,constantout_t&lt;M&gt; b){
+            constantout_t&lt;N+M&gt; r=a;
             len_t i=a.l;
-            for(;i<a.l+b.l;i++)r.c[i]=b.c[i-a.l];
+            for(;i&lt;a.l+b.l;i++)r.c[i]=b.c[i-a.l];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        static inline constexpr constantout_t<N+1> operator+(constantout_t<N> a,char b){
-            constantout_t<N+1> r=a;
+        template&lt;len_t N&gt;
+        static inline constexpr constantout_t&lt;N+1&gt; operator+(constantout_t&lt;N&gt; a,char b){
+            constantout_t&lt;N+1&gt; r=a;
             r.c[r.l]=b;
             r.l++;
             return r;
         }
-        template<len_t N>
-        static inline constexpr constantout_t<N+1> operator+(char b,constantout_t<N> a){
-            constantout_t<N+1> r{};
-            for(len_t i=1;i<=N;i++)r.c[i]=a.c[i-1];
+        template&lt;len_t N&gt;
+        static inline constexpr constantout_t&lt;N+1&gt; operator+(char b,constantout_t&lt;N&gt; a){
+            constantout_t&lt;N+1&gt; r{};
+            for(len_t i=1;i&lt;=N;i++)r.c[i]=a.c[i-1];
             r.c[0]=b;
             r.l=a.l+1;
             return r;
         }
-        //<<
-        template<len_t N,len_t M>
-        static inline constexpr constantout_t<N+M> operator<<(constantout_t<N> a,constantout_t<M> b){
-            constantout_t<N+M> r=a;
+        //&lt;&lt;
+        template&lt;len_t N,len_t M&gt;
+        static inline constexpr constantout_t&lt;N+M&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,constantout_t&lt;M&gt; b){
+            constantout_t&lt;N+M&gt; r=a;
             len_t i=a.l;
-            for(;i<a.l+b.l;i++)r.c[i]=b.c[i-a.l];
+            for(;i&lt;a.l+b.l;i++)r.c[i]=b.c[i-a.l];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        static inline constexpr constantout_t<N+1> operator<<(constantout_t<N> a,char b){
-            constantout_t<N+1> r=a;
+        template&lt;len_t N&gt;
+        static inline constexpr constantout_t&lt;N+1&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,char b){
+            constantout_t&lt;N+1&gt; r=a;
             r.c[r.l]=b;
             r.l++;
             return r;
         }
-        template<len_t N>
-        static inline constexpr constantout_t<N+1> operator<<(char b,constantout_t<N> a){
-            constantout_t<N+1> r{};
-            for(len_t i=1;i<=N;i++)r.c[i]=a.c[i-1];
+        template&lt;len_t N&gt;
+        static inline constexpr constantout_t&lt;N+1&gt; operator&lt;&lt;(char b,constantout_t&lt;N&gt; a){
+            constantout_t&lt;N+1&gt; r{};
+            for(len_t i=1;i&lt;=N;i++)r.c[i]=a.c[i-1];
             r.c[0]=b;
             r.l=a.l+1;
             return r;
         }
         //*
-        template<len_t N>
-        constexpr constantout_t<N> operator*(const constantout_t<N>& a, len_t b) {
-            constantout_t<N> r{};
+        template&lt;len_t N&gt;
+        constexpr constantout_t&lt;N&gt; operator*(const constantout_t&lt;N&gt;&amp; a, len_t b) {
+            constantout_t&lt;N&gt; r{};
             len_t i = 0;
-            for (len_t t = 0; t < b; ++t)
-                for (len_t j = 0; j < a.l && i < N - 1; ++j)
+            for (len_t t = 0; t &lt; b; ++t)
+                for (len_t j = 0; j &lt; a.l &amp;&amp; i &lt; N - 1; ++j)
                     r.c[i++] = a.c[j];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        constexpr constantout_t<N> operator*(len_t b,const constantout_t<N>& a) {
-            constantout_t<N> r{};
+        template&lt;len_t N&gt;
+        constexpr constantout_t&lt;N&gt; operator*(len_t b,const constantout_t&lt;N&gt;&amp; a) {
+            constantout_t&lt;N&gt; r{};
             len_t i = 0;
-            for (len_t t = 0; t < b; ++t)
-                for (len_t j = 0; j < a.l && i < N - 1; ++j)
+            for (len_t t = 0; t &lt; b; ++t)
+                for (len_t j = 0; j &lt; a.l &amp;&amp; i &lt; N - 1; ++j)
                     r.c[i++] = a.c[j];
             r.l=i;
             return r;
@@ -513,7 +513,7 @@ namespace out_rth{
 	        char* p=buf+20;
 	        *p=0;
 	        unsigned long long u=0;
-	        if(val<0){
+	        if(val&lt;0){
 	            u = (unsigned long long)(-val);
 	            do{
 	                unsigned long long rem = u % 10;
@@ -544,46 +544,46 @@ namespace out_rth{
 	    }
         //out_fn
         namespace out_fn{
-            static inline constexpr constantout_t<20> si(long long a) {
-                constantout_t<20> b{};
+            static inline constexpr constantout_t&lt;20&gt; si(long long a) {
+                constantout_t&lt;20&gt; b{};
                 char tmp[21]={};
                 char* p=lltoa(a, tmp);
                 unsigned len=20-(p-tmp);
-                for(unsigned i=0; i < len && i<21-1;i++) b.c[i]=p[i];
+                for(unsigned i=0; i &lt; len &amp;&amp; i&lt;21-1;i++) b.c[i]=p[i];
                 b.l=len;
                 return b;
             }
-            static inline constexpr constantout_t<20> ui(unsigned long long a) {
-                constantout_t<20> b{};
+            static inline constexpr constantout_t&lt;20&gt; ui(unsigned long long a) {
+                constantout_t&lt;20&gt; b{};
                 char tmp[21]={};
                 char* p=ulltoa(a, tmp);
                 unsigned len=20-(p-tmp);
-                for(unsigned i=0; i < len && i<21-1;i++) b.c[i]=p[i];
+                for(unsigned i=0; i &lt; len &amp;&amp; i&lt;21-1;i++) b.c[i]=p[i];
                 b.l=len;
                 return b;
             }
-            static inline constexpr constantout_t<1>  ch(char a){
-                constantout_t<1> r{};
+            static inline constexpr constantout_t&lt;1&gt;  ch(char a){
+                constantout_t&lt;1&gt; r{};
                 r.c[0]=a;
                 r.l=1;
                 return r;
             }
-            static inline constexpr constantout_t<1>  ch(signed char a){
-                constantout_t<1> r{};
-                r.c[0]=static_cast<char>(a);
+            static inline constexpr constantout_t&lt;1&gt;  ch(signed char a){
+                constantout_t&lt;1&gt; r{};
+                r.c[0]=static_cast&lt;char&gt;(a);
                 r.l=1;
                 return r;
             }
-            static inline constexpr constantout_t<1>  ch(unsigned char a){
-                constantout_t<1> r{};
-                r.c[0]=static_cast<char>(a);
+            static inline constexpr constantout_t&lt;1&gt;  ch(unsigned char a){
+                constantout_t&lt;1&gt; r{};
+                r.c[0]=static_cast&lt;char&gt;(a);
                 r.l=1;
                 return r;
             }
-            static inline constexpr constantout_t<256>cp(const char* a){
-                constantout_t<256> r{};
+            static inline constexpr constantout_t&lt;256&gt;cp(const char* a){
+                constantout_t&lt;256&gt; r{};
                 len_t i=0;
-                for(;i<256;i++){
+                for(;i&lt;256;i++){
                     if((a[i])){
                         r.c[i]=*(a+i);
                     }else{
@@ -593,36 +593,36 @@ namespace out_rth{
                 r.l=i;
                 return r;
             }
-            template<typename T>
-            static inline constexpr constantout_t<rttype::ptr_w_rt+2> vp(T* a){
-                constantout_t<rttype::ptr_w_rt+2> r{};
+            template&lt;typename T&gt;
+            static inline constexpr constantout_t&lt;rttype::ptr_w_rt+2&gt; vp(T* a){
+                constantout_t&lt;rttype::ptr_w_rt+2&gt; r{};
                 r.c[0]='0';
                 r.c[1]='x';
                 unsigned long long ax=(unsigned long long)a;
-                for(int i=0;i<rttype::ptr_w_rt;i++){
-                    int shift=(rttype::ptr_w_rt-1-i) <<2;
-                    r.c[2+i]=rttype::hexlist[(ax>>shift)&0xF];
+                for(int i=0;i&lt;rttype::ptr_w_rt;i++){
+                    int shift=(rttype::ptr_w_rt-1-i) &lt;&lt;2;
+                    r.c[2+i]=rttype::hexlist[(ax&gt;&gt;shift)&amp;0xF];
                 }
                 r.l=rttype::ptr_w_rt+2;
                 return r;
             }
-            static inline constexpr constantout_t<35> fp(long double a) {
-                constantout_t<35> b{};
+            static inline constexpr constantout_t&lt;35&gt; fp(long double a) {
+                constantout_t&lt;35&gt; b{};
                 if (a==0.0L) { b.c[0]='0'; b.l=1; return b; }
                 if (a!=a) { b.c[0]='N';
                             b.c[1]='a';
                             b.c[2]='N';
                 b.l=3;return b;}
                 bool neg=false;
-                if (a < 0.0L) { neg = true; a = -a; }
-                if (a > LDBL_MAX_RT) {
+                if (a &lt; 0.0L) { neg = true; a = -a; }
+                if (a &gt; LDBL_MAX_RT) {
                     unsigned i = 0;
                     if (neg) b.c[i++] = '-';
                     b.c[i++]='I'; b.c[i++]='N'; b.c[i++]='F';
                     b.l = i; return b;
                 }
                 constexpr long double ULL_MAX_P1 = 18446744073709551616.0L; // 2^64
-                if (a >= ULL_MAX_P1) {
+                if (a &gt;= ULL_MAX_P1) {
                     unsigned i=0;
                     if (neg) b.c[i++]='-';
                     b.c[i++]='I';b.c[i++]='N';b.c[i++]='F';
@@ -631,7 +631,7 @@ namespace out_rth{
                 unsigned long long ip = (unsigned long long)a;
                 long double frac = a - (long double)ip;
                 unsigned long long frac6 = (unsigned long long)(frac * 1000000.0L + 0.5L);
-                if (frac6 >= 1000000ULL) {
+                if (frac6 &gt;= 1000000ULL) {
                     frac6 = 0;
                     if (ip == 0xFFFFFFFFFFFFFFFFULL) {
                         unsigned i = 0;
@@ -650,23 +650,23 @@ namespace out_rth{
                 while (tn--) t[n++] = tmp[tn];
                 t[n++] = '.';
                 char fbuf[6] = {};
-                for (int i = 5; i >= 0; i--) { fbuf[i] = (char)('0' ^ (int)(frac6 % 10)); frac6 /= 10; }
-                for (int i = 0; i < 6; i++) t[n++] = fbuf[i];
+                for (int i = 5; i &gt;= 0; i--) { fbuf[i] = (char)('0' ^ (int)(frac6 % 10)); frac6 /= 10; }
+                for (int i = 0; i &lt; 6; i++) t[n++] = fbuf[i];
                 unsigned dot = 0;
-                for (unsigned i = 0; i < n; i++) if (t[i] == '.') { dot = i; break; }
-                while (n > dot + 1 && t[n-1] == '0') n--;
+                for (unsigned i = 0; i &lt; n; i++) if (t[i] == '.') { dot = i; break; }
+                while (n &gt; dot + 1 &amp;&amp; t[n-1] == '0') n--;
                 if (n == dot + 1) n = dot;
-                if (n == 2 && t[0] == '-' && t[1] == '0') { t[0] = '0'; n = 1; }
-                unsigned m = (n < 35) ? n : 35;
-                for (unsigned i = 0; i < m; i++) b.c[i] = t[i];
+                if (n == 2 &amp;&amp; t[0] == '-' &amp;&amp; t[1] == '0') { t[0] = '0'; n = 1; }
+                unsigned m = (n &lt; 35) ? n : 35;
+                for (unsigned i = 0; i &lt; m; i++) b.c[i] = t[i];
                 b.l = m;
                 return b;
             }
             namespace morecp{
-                static inline constexpr constantout_t<1024> bk(const char* a){
-                    constantout_t<1024> r{};
+                static inline constexpr constantout_t&lt;1024&gt; bk(const char* a){
+                    constantout_t&lt;1024&gt; r{};
                     len_t i=0;
-                    for(;i<1024;i++){
+                    for(;i&lt;1024;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -676,10 +676,10 @@ namespace out_rth{
                     r.l=i;
                     return r;
                 }
-                static inline constexpr constantout_t<2048> wk(const char* a){
-                    constantout_t<2048> r{};
+                static inline constexpr constantout_t&lt;2048&gt; wk(const char* a){
+                    constantout_t&lt;2048&gt; r{};
                     len_t i=0;
-                    for(;i<2048;i++){
+                    for(;i&lt;2048;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -689,10 +689,10 @@ namespace out_rth{
                     r.l=i;
                     return r;
                 }
-                static inline constexpr constantout_t<4096> dk(const char* a){
-                    constantout_t<4096> r{};
+                static inline constexpr constantout_t&lt;4096&gt; dk(const char* a){
+                    constantout_t&lt;4096&gt; r{};
                     len_t i=0;
-                    for(;i<4096;i++){
+                    for(;i&lt;4096;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -705,53 +705,53 @@ namespace out_rth{
             }
         }
         #define defsiop(T) \
-        template<len_t N>\
-        static inline constexpr constantout_t<N+20> operator<<(constantout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline constexpr constantout_t&lt;N+20&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T b){\
             auto g=out_fn::si(b);\
-            constantout_t<N+20> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+            constantout_t&lt;N+20&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=a.l+g.l;\
             return r;\
         }
         #define defuiop(T) \
-        template<len_t N>\
-        static inline constexpr constantout_t<N+20> operator<<(constantout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline constexpr constantout_t&lt;N+20&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T b){\
             auto g=out_fn::ui(b);\
-            constantout_t<N+20> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+            constantout_t&lt;N+20&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=a.l+g.l;\
             return r;\
         }
         #define defchop(T) \
-        template<len_t N>\
-        static inline constexpr constantout_t<N+1> operator<<(constantout_t<N> a,T b){\
-            constantout_t<N+1> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            r.c[a.l]=static_cast<char>(b);\
+        template&lt;len_t N&gt;\
+        static inline constexpr constantout_t&lt;N+1&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T b){\
+            constantout_t&lt;N+1&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            r.c[a.l]=static_cast&lt;char&gt;(b);\
             r.l=a.l+1;\
             return r;\
         }
         #define defcpop(T) \
-        template<len_t N>\
-        static inline constexpr constantout_t<N+256> operator<<(constantout_t<N> a,T b){\
-            constantout_t<256> g=out_fn::cp(b);\
-            constantout_t<N+256> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+        template&lt;len_t N&gt;\
+        static inline constexpr constantout_t&lt;N+256&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T b){\
+            constantout_t&lt;256&gt; g=out_fn::cp(b);\
+            constantout_t&lt;N+256&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=g.l+a.l;\
             return r;\
         }
         #define deffpop(T) \
-        template<len_t N>\
-        static inline constexpr constantout_t<N+35> operator<<(constantout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline constexpr constantout_t&lt;N+35&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T b){\
             auto g=out_fn::fp(b);\
-            constantout_t<N+35> r={};\
-            for(len_t i=0;i<a.l;i++){\
+            constantout_t&lt;N+35&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){\
                 r.c[i]=a.c[i];\
             }\
-            for(len_t i=0;i<g.l;i++){\
+            for(len_t i=0;i&lt;g.l;i++){\
                 r.c[i+a.l]=g.c[i];\
             }\
             r.l=a.l+g.l;\
@@ -784,14 +784,14 @@ namespace out_rth{
         #undef defchop
         #undef defcpop
         #undef deffpop
-        template<typename T,len_t N>
-        static inline constexpr constantout_t<N+rttype::ptr_w_rt+2> operator<<(constantout_t<N> a,T* b){
+        template&lt;typename T,len_t N&gt;
+        static inline constexpr constantout_t&lt;N+rttype::ptr_w_rt+2&gt; operator&lt;&lt;(constantout_t&lt;N&gt; a,T* b){
             auto g=out_fn::vp(b);
-            constantout_t<N+rttype::ptr_w_rt+2> r={};
-            for(len_t i=0;i<a.l;i++){
+            constantout_t&lt;N+rttype::ptr_w_rt+2&gt; r={};
+            for(len_t i=0;i&lt;a.l;i++){
                 r.c[i]=a.c[i];
             }
-            for(len_t i=0;i<g.l;i++){
+            for(len_t i=0;i&lt;g.l;i++){
                 r.c[i+a.l]=g.c[i];
             }
             r.l=a.l+g.l;
@@ -807,92 +807,92 @@ namespace out_rth{
         using len_t=unsigned;
         struct out{};
         struct outc{};
-        template<len_t N=256>
+        template&lt;len_t N=256&gt;
         struct fastout_t{
             char c[N]={};
             len_t l=0;//No include '\0'
             const char* c_str() const{return c;}
             len_t       size()  const{return l;}
-            template<len_t M>
-            fastout_t& operator=(const fastout_t<M>& a){
-                len_t cmP=M>N?N:M;
+            template&lt;len_t M&gt;
+            fastout_t&amp; operator=(const fastout_t&lt;M&gt;&amp; a){
+                len_t cmP=M&gt;N?N:M;
                 l=a.l;
                 len_t i=0;
-                for(;i<cmP;i++){
+                for(;i&lt;cmP;i++){
                     c[i]=a.c[i];
                 }
-                for(;i<N;i++){
+                for(;i&lt;N;i++){
                     c[i]=0;
                 }
-                l=(a.l<N)? a.l:N;
+                l=(a.l&lt;N)? a.l:N;
                 return (*this);
             }
         };
         //+
-        template<len_t N,len_t M>
-        static inline fastout_t<N+M> operator+(fastout_t<N> a,fastout_t<M> b){
-            fastout_t<N+M> r=a;
+        template&lt;len_t N,len_t M&gt;
+        static inline fastout_t&lt;N+M&gt; operator+(fastout_t&lt;N&gt; a,fastout_t&lt;M&gt; b){
+            fastout_t&lt;N+M&gt; r=a;
             len_t i=a.l;
-            for(;i<a.l+b.l;i++)r.c[i]=b.c[i-a.l];
+            for(;i&lt;a.l+b.l;i++)r.c[i]=b.c[i-a.l];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        static inline fastout_t<N+1> operator+(fastout_t<N> a,char b){
-            fastout_t<N+1> r=a;
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N+1&gt; operator+(fastout_t&lt;N&gt; a,char b){
+            fastout_t&lt;N+1&gt; r=a;
             r.c[r.l]=b;
             r.l++;
             return r;
         }
-        template<len_t N>
-        static inline fastout_t<N+1> operator+(char b,fastout_t<N> a){
-            fastout_t<N+1> r{};
-            for(len_t i=1;i<=N;i++)r.c[i]=a.c[i-1];
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N+1&gt; operator+(char b,fastout_t&lt;N&gt; a){
+            fastout_t&lt;N+1&gt; r{};
+            for(len_t i=1;i&lt;=N;i++)r.c[i]=a.c[i-1];
             r.c[0]=b;
             r.l=a.l+1;
             return r;
         }
-        //<<
-        template<len_t N,len_t M>
-        static inline fastout_t<N+M> operator<<(fastout_t<N> a,fastout_t<M> b){
-            fastout_t<N+M> r=a;
+        //&lt;&lt;
+        template&lt;len_t N,len_t M&gt;
+        static inline fastout_t&lt;N+M&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,fastout_t&lt;M&gt; b){
+            fastout_t&lt;N+M&gt; r=a;
             len_t i=a.l;
-            for(;i<a.l+b.l;i++)r.c[i]=b.c[i-a.l];
+            for(;i&lt;a.l+b.l;i++)r.c[i]=b.c[i-a.l];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        static inline fastout_t<N+1> operator<<(fastout_t<N> a,char b){
-            fastout_t<N+1> r=a;
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N+1&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,char b){
+            fastout_t&lt;N+1&gt; r=a;
             r.c[r.l]=b;
             r.l++;
             return r;
         }
-        template<len_t N>
-        static inline fastout_t<N+1> operator<<(char b,fastout_t<N> a){
-            fastout_t<N+1> r{};
-            for(len_t i=1;i<=N;i++)r.c[i]=a.c[i-1];
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N+1&gt; operator&lt;&lt;(char b,fastout_t&lt;N&gt; a){
+            fastout_t&lt;N+1&gt; r{};
+            for(len_t i=1;i&lt;=N;i++)r.c[i]=a.c[i-1];
             r.c[0]=b;
             r.l=a.l+1;
             return r;
         }
         //*
-        template<len_t N>
-        fastout_t<N> operator*(const fastout_t<N>& a, len_t b) {
-            fastout_t<N> r{};
+        template&lt;len_t N&gt;
+        fastout_t&lt;N&gt; operator*(const fastout_t&lt;N&gt;&amp; a, len_t b) {
+            fastout_t&lt;N&gt; r{};
             len_t i = 0;
-            for (len_t t = 0; t < b; ++t)
-                for (len_t j = 0; j < a.l && i < N - 1; ++j)
+            for (len_t t = 0; t &lt; b; ++t)
+                for (len_t j = 0; j &lt; a.l &amp;&amp; i &lt; N - 1; ++j)
                     r.c[i++] = a.c[j];
             r.l=i;
             return r;
         }
-        template<len_t N>
-        fastout_t<N> operator*(len_t b,const fastout_t<N>& a) {
-            fastout_t<N> r{};
+        template&lt;len_t N&gt;
+        fastout_t&lt;N&gt; operator*(len_t b,const fastout_t&lt;N&gt;&amp; a) {
+            fastout_t&lt;N&gt; r{};
             len_t i = 0;
-            for (len_t t = 0; t < b; ++t)
-                for (len_t j = 0; j < a.l && i < N - 1; ++j)
+            for (len_t t = 0; t &lt; b; ++t)
+                for (len_t j = 0; j &lt; a.l &amp;&amp; i &lt; N - 1; ++j)
                     r.c[i++] = a.c[j];
             r.l=i;
             return r;
@@ -901,7 +901,7 @@ namespace out_rth{
 	        char* p=buf+20;
 	        *p=0;
 	        unsigned long long u=0;
-	        if(val<0){
+	        if(val&lt;0){
 	            u = (unsigned long long)(-val);
 	            do{
 	                unsigned long long rem = u % 10;
@@ -932,46 +932,46 @@ namespace out_rth{
 	    }
         //out_fn
         namespace out_fn{
-            static inline fastout_t<20> si(long long a) {
-                fastout_t<20> b{};
+            static inline fastout_t&lt;20&gt; si(long long a) {
+                fastout_t&lt;20&gt; b{};
                 char tmp[21]={};
                 char* p=lltoa(a, tmp);
                 unsigned len=20-(p-tmp);
-                for(unsigned i=0; i < len && i<21-1;i++) b.c[i]=p[i];
+                for(unsigned i=0; i &lt; len &amp;&amp; i&lt;21-1;i++) b.c[i]=p[i];
                 b.l=len;
                 return b;
             }
-            static inline fastout_t<20> ui(unsigned long long a) {
-                fastout_t<20> b{};
+            static inline fastout_t&lt;20&gt; ui(unsigned long long a) {
+                fastout_t&lt;20&gt; b{};
                 char tmp[21]={};
                 char* p=ulltoa(a, tmp);
                 unsigned len=20-(p-tmp);
-                for(unsigned i=0; i < len && i<21-1;i++) b.c[i]=p[i];
+                for(unsigned i=0; i &lt; len &amp;&amp; i&lt;21-1;i++) b.c[i]=p[i];
                 b.l=len;
                 return b;
             }
-            static inline fastout_t<1>  ch(char a){
-                fastout_t<1> r{};
+            static inline fastout_t&lt;1&gt;  ch(char a){
+                fastout_t&lt;1&gt; r{};
                 r.c[0]=a;
                 r.l=1;
                 return r;
             }
-            static inline fastout_t<1>  ch(signed char a){
-                fastout_t<1> r{};
-                r.c[0]=static_cast<char>(a);
+            static inline fastout_t&lt;1&gt;  ch(signed char a){
+                fastout_t&lt;1&gt; r{};
+                r.c[0]=static_cast&lt;char&gt;(a);
                 r.l=1;
                 return r;
             }
-            static inline fastout_t<1>  ch(unsigned char a){
-                fastout_t<1> r{};
-                r.c[0]=static_cast<char>(a);
+            static inline fastout_t&lt;1&gt;  ch(unsigned char a){
+                fastout_t&lt;1&gt; r{};
+                r.c[0]=static_cast&lt;char&gt;(a);
                 r.l=1;
                 return r;
             }
-            static inline fastout_t<256>cp(const char* a){
-                fastout_t<256> r{};
+            static inline fastout_t&lt;256&gt;cp(const char* a){
+                fastout_t&lt;256&gt; r{};
                 len_t i=0;
-                for(;i<256;i++){
+                for(;i&lt;256;i++){
                     if((a[i])){
                         r.c[i]=*(a+i);
                     }else{
@@ -981,36 +981,36 @@ namespace out_rth{
                 r.l=i;
                 return r;
             }
-            template<typename T>
-            static inline fastout_t<rttype::ptr_w_rt+2> vp(T* a){
-                fastout_t<rttype::ptr_w_rt+2> r{};
+            template&lt;typename T&gt;
+            static inline fastout_t&lt;rttype::ptr_w_rt+2&gt; vp(T* a){
+                fastout_t&lt;rttype::ptr_w_rt+2&gt; r{};
                 r.c[0]='0';
                 r.c[1]='x';
                 unsigned long long ax=(unsigned long long)a;
-                for(int i=0;i<rttype::ptr_w_rt;i++){
-                    int shift=(rttype::ptr_w_rt-1-i) <<2;
-                    r.c[2+i]=rttype::hexlist[(ax>>shift)&0xF];
+                for(int i=0;i&lt;rttype::ptr_w_rt;i++){
+                    int shift=(rttype::ptr_w_rt-1-i) &lt;&lt;2;
+                    r.c[2+i]=rttype::hexlist[(ax&gt;&gt;shift)&amp;0xF];
                 }
                 r.l=rttype::ptr_w_rt+2;
                 return r;
             }
-            static inline fastout_t<35> fp(long double a) {
-                fastout_t<35> b{};
+            static inline fastout_t&lt;35&gt; fp(long double a) {
+                fastout_t&lt;35&gt; b{};
                 if (a==0.0L) { b.c[0]='0'; b.l=1; return b; }
                 if (a!=a) { b.c[0]='N';
                             b.c[1]='a';
                             b.c[2]='N';
                 b.l=3;return b;}
                 bool neg=false;
-                if (a < 0.0L) { neg = true; a = -a; }
-                if (a > LDBL_MAX_RT) {
+                if (a &lt; 0.0L) { neg = true; a = -a; }
+                if (a &gt; LDBL_MAX_RT) {
                     unsigned i = 0;
                     if (neg) b.c[i++] = '-';
                     b.c[i++]='I'; b.c[i++]='N'; b.c[i++]='F';
                     b.l = i; return b;
                 }
                 constexpr long double ULL_MAX_P1 = 18446744073709551616.0L; // 2^64
-                if (a >= ULL_MAX_P1) {
+                if (a &gt;= ULL_MAX_P1) {
                     unsigned i=0;
                     if (neg) b.c[i++]='-';
                     b.c[i++]='I';b.c[i++]='N';b.c[i++]='F';
@@ -1019,7 +1019,7 @@ namespace out_rth{
                 unsigned long long ip = (unsigned long long)a;
                 long double frac = a - (long double)ip;
                 unsigned long long frac6 = (unsigned long long)(frac * 1000000.0L + 0.5L);
-                if (frac6 >= 1000000ULL) {
+                if (frac6 &gt;= 1000000ULL) {
                     frac6 = 0;
                     if (ip == 0xFFFFFFFFFFFFFFFFULL) {
                         unsigned i = 0;
@@ -1038,23 +1038,23 @@ namespace out_rth{
                 while (tn--) t[n++] = tmp[tn];
                 t[n++] = '.';
                 char fbuf[6] = {};
-                for (int i = 5; i >= 0; i--) { fbuf[i] = (char)('0' ^ (int)(frac6 % 10)); frac6 /= 10; }
-                for (int i = 0; i < 6; i++) t[n++] = fbuf[i];
+                for (int i = 5; i &gt;= 0; i--) { fbuf[i] = (char)('0' ^ (int)(frac6 % 10)); frac6 /= 10; }
+                for (int i = 0; i &lt; 6; i++) t[n++] = fbuf[i];
                 unsigned dot = 0;
-                for (unsigned i = 0; i < n; i++) if (t[i] == '.') { dot = i; break; }
-                while (n > dot + 1 && t[n-1] == '0') n--;
+                for (unsigned i = 0; i &lt; n; i++) if (t[i] == '.') { dot = i; break; }
+                while (n &gt; dot + 1 &amp;&amp; t[n-1] == '0') n--;
                 if (n == dot + 1) n = dot;
-                if (n == 2 && t[0] == '-' && t[1] == '0') { t[0] = '0'; n = 1; }
-                unsigned m = (n < 35) ? n : 35;
-                for (unsigned i = 0; i < m; i++) b.c[i] = t[i];
+                if (n == 2 &amp;&amp; t[0] == '-' &amp;&amp; t[1] == '0') { t[0] = '0'; n = 1; }
+                unsigned m = (n &lt; 35) ? n : 35;
+                for (unsigned i = 0; i &lt; m; i++) b.c[i] = t[i];
                 b.l = m;
                 return b;
             }
             namespace morecp{
-                static inline fastout_t<1024> bk(const char* a){
-                    fastout_t<1024> r{};
+                static inline fastout_t&lt;1024&gt; bk(const char* a){
+                    fastout_t&lt;1024&gt; r{};
                     len_t i=0;
-                    for(;i<1024;i++){
+                    for(;i&lt;1024;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -1064,10 +1064,10 @@ namespace out_rth{
                     r.l=i;
                     return r;
                 }
-                static inline fastout_t<2048> wk(const char* a){
-                    fastout_t<2048> r{};
+                static inline fastout_t&lt;2048&gt; wk(const char* a){
+                    fastout_t&lt;2048&gt; r{};
                     len_t i=0;
-                    for(;i<2048;i++){
+                    for(;i&lt;2048;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -1077,10 +1077,10 @@ namespace out_rth{
                     r.l=i;
                     return r;
                 }
-                static inline fastout_t<4096> dk(const char* a){
-                    fastout_t<4096> r{};
+                static inline fastout_t&lt;4096&gt; dk(const char* a){
+                    fastout_t&lt;4096&gt; r{};
                     len_t i=0;
-                    for(;i<4096;i++){
+                    for(;i&lt;4096;i++){
                         if((a[i])){
                             r.c[i]=*(a+i);
                         }else{
@@ -1093,53 +1093,53 @@ namespace out_rth{
             }
         }
         #define defsiop(T) \
-        template<len_t N>\
-        static inline fastout_t<N+20> operator<<(fastout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline fastout_t&lt;N+20&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T b){\
             auto g=out_fn::si(b);\
-            fastout_t<N+20> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+            fastout_t&lt;N+20&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=a.l+g.l;\
             return r;\
         }
         #define defuiop(T) \
-        template<len_t N>\
-        static inline fastout_t<N+20> operator<<(fastout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline fastout_t&lt;N+20&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T b){\
             auto g=out_fn::ui(b);\
-            fastout_t<N+20> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+            fastout_t&lt;N+20&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=a.l+g.l;\
             return r;\
         }
         #define defchop(T) \
-        template<len_t N>\
-        static inline fastout_t<N+1> operator<<(fastout_t<N> a,T b){\
-            fastout_t<N+1> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            r.c[a.l]=static_cast<char>(b);\
+        template&lt;len_t N&gt;\
+        static inline fastout_t&lt;N+1&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T b){\
+            fastout_t&lt;N+1&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            r.c[a.l]=static_cast&lt;char&gt;(b);\
             r.l=a.l+1;\
             return r;\
         }
         #define defcpop(T) \
-        template<len_t N>\
-        static inline fastout_t<N+256> operator<<(fastout_t<N> a,T b){\
-            fastout_t<256> g=out_fn::cp(b);\
-            fastout_t<N+256> r={};\
-            for(len_t i=0;i<a.l;i++){r.c[i]=a.c[i];}\
-            for(len_t i=0;i<g.l;i++){r.c[i+a.l]=g.c[i];}\
+        template&lt;len_t N&gt;\
+        static inline fastout_t&lt;N+256&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T b){\
+            fastout_t&lt;256&gt; g=out_fn::cp(b);\
+            fastout_t&lt;N+256&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){r.c[i]=a.c[i];}\
+            for(len_t i=0;i&lt;g.l;i++){r.c[i+a.l]=g.c[i];}\
             r.l=g.l+a.l;\
             return r;\
         }
         #define deffpop(T) \
-        template<len_t N>\
-        static inline fastout_t<N+35> operator<<(fastout_t<N> a,T b){\
+        template&lt;len_t N&gt;\
+        static inline fastout_t&lt;N+35&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T b){\
             auto g=out_fn::fp(b);\
-            fastout_t<N+35> r={};\
-            for(len_t i=0;i<a.l;i++){\
+            fastout_t&lt;N+35&gt; r={};\
+            for(len_t i=0;i&lt;a.l;i++){\
                 r.c[i]=a.c[i];\
             }\
-            for(len_t i=0;i<g.l;i++){\
+            for(len_t i=0;i&lt;g.l;i++){\
                 r.c[i+a.l]=g.c[i];\
             }\
             r.l=a.l+g.l;\
@@ -1172,26 +1172,26 @@ namespace out_rth{
         #undef defchop
         #undef defcpop
         #undef deffpop
-        template<typename T,len_t N>
-        static inline fastout_t<N+rttype::ptr_w_rt+2> operator<<(fastout_t<N> a,T* b){
+        template&lt;typename T,len_t N&gt;
+        static inline fastout_t&lt;N+rttype::ptr_w_rt+2&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,T* b){
             auto g=out_fn::vp(b);
-            fastout_t<N+rttype::ptr_w_rt+2> r={};
-            for(len_t i=0;i<a.l;i++){
+            fastout_t&lt;N+rttype::ptr_w_rt+2&gt; r={};
+            for(len_t i=0;i&lt;a.l;i++){
                 r.c[i]=a.c[i];
             }
-            for(len_t i=0;i<g.l;i++){
+            for(len_t i=0;i&lt;g.l;i++){
                 r.c[i+a.l]=g.c[i];
             }
             r.l=a.l+g.l;
             return r;
         }
-        template<len_t N>
-        static inline fastout_t<N> operator<<(fastout_t<N> a,out){
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,out){
             writer(a.c,a.l);
             return a;
         }
-        template<len_t N>
-        static inline fastout_t<N> operator<<(fastout_t<N> a,outc){
+        template&lt;len_t N&gt;
+        static inline fastout_t&lt;N&gt; operator&lt;&lt;(fastout_t&lt;N&gt; a,outc){
             writer(a.c,a.l);
             return {};
         }
