@@ -1,9 +1,730 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <title>code</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>rth_out_pro · 企业级 C++ 高性能输出库</title>
+<style>
+  :root{
+    --bg:#05070d;
+    --panel:rgba(255,255,255,.03);
+    --line:rgba(255,255,255,.08);
+    --line-strong:rgba(255,255,255,.14);
+    --text:#eef2fa;
+    --muted:#8a95ad;
+    --dim:#5c6780;
+    --cyan:#22d3ee;
+    --blue:#3b82f6;
+    --violet:#8b5cf6;
+    --green:#34d399;
+    --amber:#fbbf24;
+    --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--font);
+    background:var(--bg);
+    color:var(--text);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+
+  /* ============ 背景 ============ */
+  .bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.026) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.026) 1px,transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 15%,transparent 70%);
+    mask-image:radial-gradient(ellipse 90% 70% at 50% 20%,#000 15%,transparent 70%);
+  }
+  .glow{position:absolute;border-radius:50%;filter:blur(130px);opacity:.3}
+  .glow.c{width:620px;height:620px;background:var(--cyan);top:-260px;left:-160px}
+  .glow.v{width:700px;height:700px;background:var(--violet);top:34%;right:-260px;opacity:.24}
+  .glow.b{width:560px;height:560px;background:var(--blue);bottom:-260px;left:20%;opacity:.2}
+
+  /* ============ 顶栏 ============ */
+  header{
+    position:sticky;top:0;z-index:50;
+    height:68px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 40px;
+    background:rgba(5,7,13,.78);
+    border-bottom:1px solid var(--line);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand-mark{
+    width:34px;height:34px;border-radius:9px;
+    display:grid;place-items:center;
+    font-family:var(--mono);font-size:15px;font-weight:700;color:#05070d;
+    background:linear-gradient(135deg,var(--cyan),var(--violet));
+    box-shadow:0 8px 24px -6px rgba(34,211,238,.6);
+  }
+  .brand-name{font-size:16px;font-weight:700;letter-spacing:-.01em}
+  .brand-name em{
+    font-style:normal;
+    background:linear-gradient(100deg,var(--cyan),var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .brand-tag{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+    color:var(--dim);padding-left:12px;margin-left:4px;
+    border-left:1px solid var(--line-strong);
+  }
+  .top-nav{display:flex;align-items:center;gap:30px}
+  .top-nav a{
+    font-size:13.5px;color:var(--muted);text-decoration:none;
+    transition:color .25s;position:relative;
+  }
+  .top-nav a::after{
+    content:"";position:absolute;left:0;bottom:-6px;height:1.5px;width:0;
+    background:linear-gradient(90deg,var(--cyan),var(--violet));
+    transition:width .3s cubic-bezier(.16,.84,.44,1);
+  }
+  .top-nav a:hover{color:var(--text)}
+  .top-nav a:hover::after{width:100%}
+  .gh-link{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:8px 18px;border-radius:9px;
+    font-size:13px;color:var(--text);text-decoration:none;
+    background:rgba(255,255,255,.05);
+    border:1px solid var(--line-strong);
+    transition:background .25s,border-color .25s,transform .25s;
+  }
+  .gh-link:hover{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.45);transform:translateY(-1px)}
+
+  /* ============ 布局 ============ */
+  main{position:relative;z-index:10;max-width:1180px;margin:0 auto;padding:0 40px 120px}
+
+  /* ============ Hero ============ */
+  .hero{padding:88px 0 72px;text-align:center;position:relative}
+  .hero-badge{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:7px 16px;border-radius:999px;
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;
+    color:var(--cyan);
+    background:rgba(34,211,238,.06);
+    border:1px solid rgba(34,211,238,.22);
+    margin-bottom:26px;
+  }
+  .hero-badge::before{
+    content:"";width:5px;height:5px;border-radius:50%;
+    background:var(--cyan);box-shadow:0 0 9px var(--cyan);
+    animation:pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+
+  h1{
+    font-size:clamp(38px,5.6vw,68px);
+    line-height:1.1;font-weight:800;letter-spacing:-.035em;
+  }
+  h1 .accent{
+    background:linear-gradient(100deg,var(--cyan),var(--blue) 48%,var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .hero-sub{
+    margin:26px auto 0;max-width:680px;
+    font-size:17px;line-height:1.85;color:var(--muted);
+  }
+  .hero-meta{
+    display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+    margin-top:34px;
+  }
+  .chip{
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    padding:7px 14px;border-radius:8px;
+    color:#a9b6d0;background:rgba(255,255,255,.04);
+    border:1px solid var(--line);
+  }
+  .chip strong{color:var(--cyan);font-weight:600}
+
+  /* ============ 章节通用 ============ */
+  section{padding:72px 0;border-top:1px solid var(--line)}
+  .sec-head{margin-bottom:48px}
+  .sec-eyebrow{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.18em;
+    color:var(--cyan);margin-bottom:14px;
+  }
+  h2{
+    font-size:clamp(24px,3.2vw,38px);
+    font-weight:800;letter-spacing:-.025em;line-height:1.2;
+  }
+  h2 .accent{
+    background:linear-gradient(100deg,var(--cyan),var(--violet));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  .sec-desc{
+    margin-top:16px;max-width:640px;
+    font-size:15.5px;line-height:1.85;color:var(--muted);
+  }
+
+  /* ============ 重构亮点卡片 ============ */
+  .highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .hl{
+    position:relative;padding:30px 26px;border-radius:16px;
+    background:linear-gradient(165deg,rgba(255,255,255,.055),rgba(255,255,255,.015));
+    border:1px solid var(--line);
+    transition:transform .35s cubic-bezier(.16,.84,.44,1),border-color .35s,box-shadow .35s;
+  }
+  .hl::before{
+    content:"";position:absolute;top:0;left:26px;right:26px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(34,211,238,.8),transparent);
+    opacity:0;transition:opacity .35s;
+  }
+  .hl:hover{
+    transform:translateY(-6px);
+    border-color:rgba(34,211,238,.32);
+    box-shadow:0 30px 60px -30px rgba(34,211,238,.5);
+  }
+  .hl:hover::before{opacity:1}
+  .hl-num{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+    color:var(--dim);margin-bottom:18px;
+  }
+  .hl h3{font-size:17.5px;font-weight:700;letter-spacing:-.01em;margin-bottom:12px}
+  .hl p{font-size:14px;line-height:1.8;color:var(--muted)}
+
+  /* ============ 三模式 ============ */
+  .modes{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .mode{
+    display:flex;flex-direction:column;
+    border-radius:16px;overflow:hidden;
+    background:var(--panel);
+    border:1px solid var(--line);
+    transition:transform .35s cubic-bezier(.16,.84,.44,1),border-color .35s,box-shadow .35s;
+  }
+  .mode:hover{
+    transform:translateY(-6px);
+    border-color:rgba(139,92,246,.4);
+    box-shadow:0 30px 60px -30px rgba(139,92,246,.5);
+  }
+  .mode-head{
+    padding:22px 24px 18px;
+    border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.02);
+  }
+  .mode-tag{
+    display:inline-block;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    padding:4px 10px;border-radius:6px;
+    color:var(--cyan);background:rgba(34,211,238,.08);
+    border:1px solid rgba(34,211,238,.2);
+    margin-bottom:12px;
+  }
+  .mode h3{font-size:17px;font-weight:700;letter-spacing:-.01em}
+  .mode-body{padding:22px 24px;flex:1;display:flex;flex-direction:column}
+  .mode-body p{font-size:13.5px;line-height:1.8;color:var(--muted);margin-bottom:16px}
+  .mode-list{list-style:none;font-size:13px;color:var(--muted);margin-bottom:18px}
+  .mode-list li{
+    padding-left:18px;position:relative;line-height:1.9;
+  }
+  .mode-list li::before{
+    content:"▸";position:absolute;left:0;color:var(--cyan);font-size:11px;
+  }
+  .mode-use{
+    margin-top:auto;
+    font-family:var(--mono);font-size:11.5px;color:var(--dim);
+    padding-top:16px;border-top:1px dashed var(--line);
+  }
+  .mode-use strong{color:var(--green);font-weight:500}
+
+  /* ============ 代码块 ============ */
+  .codeblock{
+    border-radius:14px;overflow:hidden;
+    background:rgba(8,11,20,.9);
+    border:1px solid var(--line-strong);
+    box-shadow:0 30px 70px -40px rgba(34,211,238,.4);
+    margin:0;
+  }
+  .codebar{
+    display:flex;align-items:center;gap:8px;
+    padding:11px 16px;
+    background:rgba(255,255,255,.035);
+    border-bottom:1px solid var(--line);
+  }
+  .codebar i{width:10px;height:10px;border-radius:50%;display:block}
+  .codebar i:nth-child(1){background:#ff5f57}
+  .codebar i:nth-child(2){background:#febc2e}
+  .codebar i:nth-child(3){background:#28c840}
+  .codebar .fname{
+    margin-left:12px;font-family:var(--mono);font-size:12px;color:var(--dim);
+  }
+  .codebar .tag{
+    margin-left:auto;font-family:var(--mono);font-size:10.5px;
+    padding:3px 9px;border-radius:6px;color:var(--cyan);
+    background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.2);
+  }
+  pre{
+    margin:0;
+    padding:20px 22px;
+    font-family:var(--mono);font-size:13px;line-height:1.9;
+    color:#c9d3e6;overflow-x:auto;white-space:pre;
+  }
+  .tk-k{color:#c792ea}
+  .tk-f{color:#82aaff}
+  .tk-s{color:#c3e88d}
+  .tk-c{color:#4d5a78;font-style:italic}
+  .tk-v{color:#ffcb6b}
+  .tk-n{color:#f78c6c}
+  .tk-t{color:#22d3ee}
+
+  /* ============ 对比表 ============ */
+  .table-wrap{
+    border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);
+    background:var(--panel);
+  }
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{
+    padding:15px 20px;text-align:left;
+    border-bottom:1px solid var(--line);
+  }
+  th{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;
+    color:var(--dim);font-weight:600;
+    background:rgba(255,255,255,.025);
+  }
+  td{color:var(--muted);line-height:1.7}
+  td:first-child{color:var(--text);font-weight:500}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:rgba(34,211,238,.03)}
+  .tag-new{
+    display:inline-block;
+    font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+    padding:2px 8px;border-radius:5px;
+    color:var(--green);background:rgba(52,211,153,.1);
+    border:1px solid rgba(52,211,153,.25);
+    margin-left:8px;
+  }
+
+  /* ============ 快速上手 ============ */
+  .quick{
+    display:grid;grid-template-columns:1fr 1fr;gap:20px;
+  }
+  .quick-col h4{
+    font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;
+    color:var(--cyan);margin-bottom:14px;
+  }
+  .note{
+    margin-top:14px;padding:14px 18px;border-radius:10px;
+    font-size:13px;line-height:1.75;color:var(--muted);
+    background:rgba(34,211,238,.045);
+    border-left:2px solid var(--cyan);
+  }
+
+  /* ============ 总结 ============ */
+  .summary{
+    text-align:center;padding:52px 40px;
+    border-radius:20px;
+    background:linear-gradient(165deg,rgba(34,211,238,.06),rgba(139,92,246,.05));
+    border:1px solid var(--line-strong);
+    position:relative;overflow:hidden;
+  }
+  .summary::after{
+    content:"";position:absolute;top:-50%;left:50%;transform:translateX(-50%);
+    width:700px;height:320px;
+    background:radial-gradient(ellipse,rgba(34,211,238,.16),transparent 70%);
+    pointer-events:none;
+  }
+  .summary h2{position:relative}
+  .summary p{
+    position:relative;margin:20px auto 0;max-width:620px;
+    font-size:15px;line-height:1.9;color:var(--muted);
+  }
+  .summary .chips{
+    position:relative;display:flex;flex-wrap:wrap;justify-content:center;
+    gap:10px;margin-top:30px;
+  }
+
+  /* ============ 页脚 ============ */
+  footer{
+    position:relative;z-index:10;
+    padding:36px 40px;text-align:center;
+    font-family:var(--mono);font-size:12px;color:var(--dim);
+    border-top:1px solid var(--line);
+  }
+  footer a{color:var(--muted);text-decoration:none;transition:color .25s}
+  footer a:hover{color:var(--cyan)}
+
+  /* ============ 响应式 ============ */
+  @media (max-width:980px){
+    .highlights,.modes{grid-template-columns:1fr}
+    .quick{grid-template-columns:1fr}
+    main{padding:0 24px 80px}
+    header{padding:0 24px}
+    .top-nav{display:none}
+  }
+  @media (max-width:560px){
+    .hero{padding:60px 0 48px}
+    h1{font-size:34px}
+    .hero-sub{font-size:15px}
+    th,td{padding:12px 14px;font-size:13px}
+    pre{font-size:12px;padding:16px}
+    .summary{padding:40px 22px}
+  }
+</style>
 </head>
 <body>
-<p>下载</p>
-<a href="https://code.rangtt.com/download/index.html">download</a>
-<p>代码</p>
-<a href="https://code.rangtt.com/list/index.html">list</a>
+
+<div class="bg">
+  <div class="grid"></div>
+  <div class="glow c"></div>
+  <div class="glow v"></div>
+  <div class="glow b"></div>
+</div>
+
+<!-- 顶栏 -->
+<header>
+  <div class="brand">
+    <div class="brand-mark">R</div>
+    <div class="brand-name">rth_<em>out_pro</em></div>
+    <span class="brand-tag">C++11+</span>
+  </div>
+  <nav class="top-nav">
+    <a href="#highlights">重构亮点</a>
+    <a href="#modes">三种模式</a>
+    <a href="#details">实现细节</a>
+    <a href="#compare">对比</a>
+    <a href="#quick">快速上手</a>
+  </nav>
+  <a href="https://github.com/listrt/rangtt/blob/main/output/rth_out_pro.cpp" class="gh-link" target="_blank" rel="noopener">源码 ↗</a>
+</header>
+
+<main>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero" style="border-top:none">
+    <div class="hero-badge">RTH_IO_PRO 重构版 · 企业级输出库</div>
+    <h1>
+      零依赖 · 跨编译器<br>
+      为 C++ 打造的<span class="accent">高性能格式化输出</span>
+    </h1>
+    <p class="hero-sub">
+      rth_out_pro 是基于 rth_io_pro 全面重构的现代 C++ 输出库。它将运行时流式输出、
+      编译期常量拼接与高速缓冲输出彻底解耦为三个独立模块，按需启用，
+      在 40 种编译器平台上提供系统调用级别的极致性能。
+    </p>
+    <div class="hero-meta">
+      <span class="chip"><strong>C++11+</strong> 标准要求</span>
+      <span class="chip"><strong>40</strong> 种编译器支持</span>
+      <span class="chip"><strong>3</strong> 种输出模式</span>
+      <span class="chip"><strong>0</strong> 依赖 · 0 堆分配</span>
+    </div>
+  </section>
+
+  <!-- ============ 重构亮点 ============ -->
+  <section id="highlights">
+    <div class="sec-head">
+      <div class="sec-eyebrow">REFACTOR HIGHLIGHTS</div>
+      <h2>从「能用」到 <span class="accent">「工程化」</span> 的跃迁</h2>
+      <p class="sec-desc">
+        重构后的版本保留了 rth_io_pro 在跨编译器与系统调用层面的极致优化，
+        同时通过架构解耦、命名空间治理与健壮性修正，使其真正适合作为企业级基础设施组件。
+      </p>
+    </div>
+
+    <div class="highlights">
+      <article class="hl">
+        <div class="hl-num">01 / ARCHITECTURE</div>
+        <h3>三模式解耦架构</h3>
+        <p>运行时输出、编译期常量、高速缓冲三大能力拆分为独立模块，通过顶层宏精确控制启用。嵌入式场景可仅启用 fast_out，将代码体积压缩至最小。</p>
+      </article>
+      <article class="hl">
+        <div class="hl-num">02 / NAMESPACE</div>
+        <h3>命名空间隔离</h3>
+        <p>所有实现细节收归 out_rth 总域，对外仅暴露 rttype::out_t 轻量标记类型，彻底解决 rth_io_pro 中 rttype 与用户代码的命名污染问题。</p>
+      </article>
+      <article class="hl">
+        <div class="hl-num">03 / COMPATIBILITY</div>
+        <h3>编译器兼容性基线</h3>
+        <p>要求 C++11 及以上以启用 constexpr 常量输出，但底层 writer() 仍继承 40 种编译器的汇编级优化，覆盖桌面、ARM、国产与历史平台。</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ 三种模式 ============ -->
+  <section id="modes">
+    <div class="sec-head">
+      <div class="sec-eyebrow">THREE OUTPUT MODES</div>
+      <h2>三种模式，<span class="accent">各司其职</span></h2>
+      <p class="sec-desc">
+        通过 rth_out_pro_runtime_normal_out、rth_out_pro_constant_out、rth_out_pro_runtime_fast_out
+        三个宏开关，按需裁剪你的输出能力。
+      </p>
+    </div>
+
+    <div class="modes">
+
+      <!-- 模式一 -->
+      <article class="mode">
+        <div class="mode-head">
+          <span class="mode-tag">runtime_normal_out</span>
+          <h3>流式输出</h3>
+        </div>
+        <div class="mode-body">
+          <p>最接近 std::cout 的使用体验，但性能高出数倍。每次 operator&lt;&lt; 直接触发 writer() 系统调用。</p>
+          <ul class="mode-list">
+            <li>手写 lltoa / ulltoa，比 sprintf 快 3-5 倍</li>
+            <li>浮点 6 位小数截断 + 尾零消除</li>
+            <li>指针格式化为固定宽度十六进制</li>
+          </ul>
+          <div class="mode-use">适用：<strong>调试日志 · 交互式 CLI · 嵌入式终端</strong></div>
+        </div>
+      </article>
+
+      <!-- 模式二 -->
+      <article class="mode">
+        <div class="mode-head">
+          <span class="mode-tag">constant_out</span>
+          <h3>编译期常量拼接</h3>
+        </div>
+        <div class="mode-body">
+          <p>最具技术含量的模块，允许在 constexpr 上下文中完成字符串格式化，零运行时开销。</p>
+          <ul class="mode-list">
+            <li>constantout_t&lt;N&gt; 模板追踪容量，编译期推断长度</li>
+            <li>constexpr 版本 lltoa / ulltoa，无 UB</li>
+            <li>支持 + / * / &lt;&lt; 三种组合操作符</li>
+          </ul>
+          <div class="mode-use">适用：<strong>编译期日志 · 静态资源表 · 模板元编程</strong></div>
+        </div>
+      </article>
+
+      <!-- 模式三 -->
+      <article class="mode">
+        <div class="mode-head">
+          <span class="mode-tag">runtime_fast_out</span>
+          <h3>缓冲式高速输出</h3>
+        </div>
+        <div class="mode-body">
+          <p>融合前两者优势：编译期已知容量的固定缓冲区 + 运行时流式追加，最后一次性刷出。</p>
+          <ul class="mode-list">
+            <li>fastout_t&lt;N&gt; 栈缓冲区，零堆分配</li>
+            <li>&lt;&lt; out 触发单次 writer() 调用</li>
+            <li>每线程独立缓冲，无锁竞争</li>
+          </ul>
+          <div class="mode-use">适用：<strong>高频交易日志 · 游戏引擎 · 服务端访问日志</strong></div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- ============ 实现细节 ============ -->
+  <section id="details">
+    <div class="sec-head">
+      <div class="sec-eyebrow">IMPLEMENTATION DETAILS</div>
+      <h2>关键实现 <span class="accent">细节修正</span></h2>
+      <p class="sec-desc">
+        相比 rth_io_pro，重构版在浮点健壮性、类型萃取与指针宽度自适应上做了系统性修正。
+      </p>
+    </div>
+
+    <div class="codeblock" style="margin-bottom:22px">
+      <div class="codebar">
+        <i></i><i></i><i></i>
+        <span class="fname">float_format.cpp</span>
+        <span class="tag">健壮性修正</span>
+      </div>
+<pre><span class="tk-c">// 1. 处理 INF / NaN / 负零</span>
+<span class="tk-k">if</span> (a != a)      → <span class="tk-s">"NaN"</span>
+<span class="tk-k">if</span> (a &gt; LDBL_MAX) → <span class="tk-s">"INF"</span> / <span class="tk-s">"-INF"</span>
+<span class="tk-k">if</span> (a == -0.0L)   → <span class="tk-s">"0"</span>
+
+<span class="tk-c">// 2. 跨平台正确获取 long double 上限</span>
+<span class="tk-t">#define</span> LDBL_MAX_RT ((<span class="tk-k">long double</span>)__LDBL_MAX__)
+
+<span class="tk-c">// 3. 浮点转 6 位小数使用四舍五入而非截断</span>
+<span class="tk-k">unsigned long long</span> frac6 = (<span class="tk-k">unsigned long long</span>)(frac * <span class="tk-n">1000000.0L</span> + <span class="tk-n">0.5L</span>);
+
+<span class="tk-c">// 4. 进位溢出处理：ip 为 ULLONG_MAX 时回退为 INF</span>
+<span class="tk-k">if</span> (frac6 &gt;= <span class="tk-n">1000000ULL</span>) {
+    frac6 = <span class="tk-n">0</span>;
+    <span class="tk-k">if</span> (ip == <span class="tk-n">0xFFFFFFFFFFFFFFFFULL</span>) { <span class="tk-c">/* 回退为 INF */</span> }
+    ip++;
+}</pre>
+    </div>
+
+    <div class="codeblock">
+      <div class="codebar">
+        <i></i><i></i><i></i>
+        <span class="fname">typetrait.hpp</span>
+        <span class="tag">类型萃取</span>
+      </div>
+<pre><span class="tk-c">// 正确区分 char* / const char* / volatile char* 及其 CV 组合</span>
+<span class="tk-k">template</span>&lt;&gt; <span class="tk-k">struct</span> <span class="tk-f">is_charptr</span>&lt;<span class="tk-k">char</span>&gt;                  { <span class="tk-k">static const int</span> v=<span class="tk-n">1</span>; };
+<span class="tk-k">template</span>&lt;&gt; <span class="tk-k">struct</span> <span class="tk-f">is_charptr</span>&lt;<span class="tk-k">const char</span>&gt;            { <span class="tk-k">static const int</span> v=<span class="tk-n">1</span>; };
+<span class="tk-k">template</span>&lt;&gt; <span class="tk-k">struct</span> <span class="tk-f">is_charptr</span>&lt;<span class="tk-k">volatile char</span>&gt;         { <span class="tk-k">static const int</span> v=<span class="tk-n">1</span>; };
+<span class="tk-k">template</span>&lt;&gt; <span class="tk-k">struct</span> <span class="tk-f">is_charptr</span>&lt;<span class="tk-k">const volatile char</span>&gt;   { <span class="tk-k">static const int</span> v=<span class="tk-n">1</span>; };
+
+<span class="tk-c">// 指针宽度编译期自适应：32 位 → 8 字符，64 位 → 16 字符</span>
+<span class="tk-k">static constexpr unsigned</span> ptr_w_rt = <span class="tk-k">sizeof</span>(<span class="tk-k">void</span>*) &lt;&lt; <span class="tk-n">1</span>;</pre>
+    </div>
+  </section>
+
+  <!-- ============ 对比 ============ -->
+  <section id="compare">
+    <div class="sec-head">
+      <div class="sec-eyebrow">COMPARISON</div>
+      <h2>与 rth_io_pro 的 <span class="accent">对比</span></h2>
+      <p class="sec-desc">
+        重构不是简单改名，而是在架构、健壮性与编译期能力上的全面升级。
+      </p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>维度</th>
+            <th>rth_io_pro</th>
+            <th>rth_out_pro（重构版）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>架构</td>
+            <td>单命名空间耦合</td>
+            <td>三模式解耦，宏开关控制 <span class="tag-new">NEW</span></td>
+          </tr>
+          <tr>
+            <td>依赖</td>
+            <td>需要 rttype::oitype 状态对象</td>
+            <td>仅需 rttype::out_t 空标记</td>
+          </tr>
+          <tr>
+            <td>编译期输出</td>
+            <td>有但耦合</td>
+            <td>独立 constant_out 模块，支持 + / * / &lt;&lt;</td>
+          </tr>
+          <tr>
+            <td>快速输出</td>
+            <td>有但耦合</td>
+            <td>独立 fastrt 模块，缓冲刷新语义更清晰</td>
+          </tr>
+          <tr>
+            <td>浮点健壮性</td>
+            <td>无 INF / NaN 处理</td>
+            <td>完整处理所有 IEEE 754 边界 <span class="tag-new">FIX</span></td>
+          </tr>
+          <tr>
+            <td>命名空间</td>
+            <td>rttype + rth_io 混用</td>
+            <td>统一收归 out_rth</td>
+          </tr>
+          <tr>
+            <td>头文件保护</td>
+            <td>单层 #ifndef</td>
+            <td>双保险（rth_out_pro + 模块宏）</td>
+          </tr>
+          <tr>
+            <td>适用标准</td>
+            <td>C++98 起</td>
+            <td>C++11 起（推荐 C++17）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 快速上手 ============ -->
+  <section id="quick">
+    <div class="sec-head">
+      <div class="sec-eyebrow">QUICK START</div>
+      <h2>快速上手</h2>
+      <p class="sec-desc">
+        三个模式可独立或组合使用，编译时通过宏开关控制裁剪。
+      </p>
+    </div>
+
+    <div class="quick">
+      <div class="quick-col">
+        <h4>// 示例代码</h4>
+        <div class="codeblock">
+          <div class="codebar">
+            <i></i><i></i><i></i>
+            <span class="fname">main.cpp</span>
+          </div>
+<pre><span class="tk-c">#include &lt;rth_out_pro&gt;</span>
+
+<span class="tk-k">int</span> <span class="tk-f">main</span>() {
+    <span class="tk-c">// 模式一：流式输出</span>
+    <span class="tk-t">rttype</span>::out &lt;&lt; <span class="tk-s">"Hello, "</span>
+               &lt;&lt; <span class="tk-s">"rth_out_pro!"</span>
+               &lt;&lt; <span class="tk-t">rttype</span>::endl;
+
+    <span class="tk-c">// 模式二：编译期常量</span>
+    <span class="tk-k">constexpr auto</span> banner =
+        <span class="tk-t">rttype</span>::constantout&lt;<span class="tk-n">64</span>&gt;{}
+        &lt;&lt; <span class="tk-s">"== rth_out_pro v2 =="</span>;
+
+    <span class="tk-c">// 模式三：高速缓冲</span>
+    <span class="tk-t">rttype</span>::fastrt::fastout_t&lt;<span class="tk-n">256</span>&gt; buf;
+    buf &lt;&lt; <span class="tk-s">"PID="</span> &lt;&lt; <span class="tk-n">1234</span>
+        &lt;&lt; <span class="tk-s">" STATUS="</span> &lt;&lt; <span class="tk-s">"OK"</span>;
+    buf &lt;&lt; <span class="tk-t">rttype</span>::fastrt::out;
+
+    <span class="tk-k">return</span> <span class="tk-n">0</span>;
+}</pre>
+        </div>
+      </div>
+
+      <div class="quick-col">
+        <h4>// 编译选项</h4>
+        <div class="codeblock">
+          <div class="codebar">
+            <i></i><i></i><i></i>
+            <span class="fname">terminal</span>
+          </div>
+<pre><span class="tk-c"># 启用全部三模式（默认）</span>
+g++ -std=c++17 -O2 main.cpp
+
+<span class="tk-c"># 仅启用快速输出（嵌入式裁剪）</span>
+g++ -std=c++17 -O2 \
+    -D rth_out_pro_constant_out \
+    -D rth_out_pro_runtime_normal_out \
+    main.cpp</pre>
+        </div>
+
+        <div class="note">
+          每个平台都绕过了 printf / iostream 的缓冲层，直接调用系统调用
+          （Linux syscall、Windows WriteFile、DOS int 0x21），实现单次写入的绝对最小开销。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 总结 ============ -->
+  <section style="border-top:none">
+    <div class="summary">
+      <h2>保留极致优化，补齐 <span class="accent">工程化短板</span></h2>
+      <p>
+        rth_out_pro 保留了 rth_io_pro 在跨编译器和系统调用层面的极致优化，
+        同时通过架构解耦、命名空间治理、浮点健壮性修正和编译期能力补全，
+        使其真正适合作为企业级 C++ 项目的基础设施组件。
+        无论资源受限的嵌入式设备，还是高吞吐的服务端日志，都能找到对应的模式与实现路径。
+      </p>
+      <div class="chips">
+        <span class="chip"><strong>零依赖</strong> 单头文件</span>
+        <span class="chip"><strong>零堆分配</strong> 全部栈上</span>
+        <span class="chip"><strong>40</strong> 编译器平台</span>
+        <span class="chip"><strong>C++11+</strong> 现代标准</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  rth_out_pro · 重构自 rth_io_pro ·
+  <a href="https://github.com/listrt/rangtt/blob/main/output/rth_out_pro.cpp" target="_blank" rel="noopener">查看源码</a>
+</footer>
+
 </body>
+</html>
