@@ -17,7 +17,6 @@
     --blue:#3b82f6;
     --violet:#8b5cf6;
     --green:#34d399;
-    --amber:#fbbf24;
     --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
     --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   }
@@ -31,6 +30,16 @@
     overflow-x:hidden;
     -webkit-font-smoothing:antialiased;
     line-height:1.6;
+  }
+
+  /* ============ 发光边框选中：原生选中色透明 ============ */
+  body ::selection{
+    background: transparent;
+    color: inherit;
+  }
+  body ::-moz-selection{
+    background: transparent;
+    color: inherit;
   }
 
   /* ============ 背景 ============ */
@@ -352,6 +361,44 @@
   }
   footer a{color:var(--muted);text-decoration:none;transition:color .25s}
   footer a:hover{color:var(--cyan)}
+
+  /* ============ 发光高亮层 ============ */
+  .highlight-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  .highlight-rect {
+    position: absolute;
+    border-radius: 6px;
+    transition:
+      background-color 0.22s ease,
+      box-shadow 0.22s ease,
+      border-color 0.22s ease;
+    border: 1.5px solid transparent;
+    background-color: transparent;
+    box-shadow: none;
+  }
+
+  /* 拖动中：只有发光边框，无填充 */
+  .highlight-rect.dragging {
+    border-color: rgba(34, 211, 238, 0.9);
+    background-color: transparent;
+    box-shadow:
+      0 0 6px rgba(34, 211, 238, 0.45),
+      0 0 14px rgba(34, 211, 238, 0.25);
+  }
+
+  /* 松开后：过渡到普通选中（半透明填充 + 柔和边框） */
+  .highlight-rect.selected {
+    border-color: rgba(34, 211, 238, 0.35);
+    background-color: rgba(34, 211, 238, 0.18);
+    box-shadow:
+      0 0 4px rgba(34, 211, 238, 0.15),
+      0 0 10px rgba(34, 211, 238, 0.08);
+  }
 
   /* ============ 响应式 ============ */
   @media (max-width:980px){
@@ -726,5 +773,164 @@ g++ -std=c++17 -O2 \
   <a href="https://github.com/listrt/rangtt/blob/main/output/rth_out_pro.cpp" target="_blank" rel="noopener">查看源码</a>
 </footer>
 
+<!-- 发光高亮层 -->
+<div class="highlight-layer" id="highlightLayer"></div>
+
+<script>
+  /* =========================================================
+     发光边框选中效果
+     - 拖动中：只有发光边框，无填充
+     - 松开后：过渡为半透明填充
+     - 点击空白处：取消选中
+     ========================================================= */
+  const layer = document.getElementById('highlightLayer');
+
+  let rafId = null;
+  let isDragging = false;
+  let currentRects = [];
+
+  function clearHighlights() {
+    layer.innerHTML = '';
+    currentRects = [];
+  }
+
+  function createRect(rect, state) {
+    const div = document.createElement('div');
+    div.className = 'highlight-rect ' + state;
+    div.style.left = rect.left + 'px';
+    div.style.top = rect.top + 'px';
+    div.style.width = rect.width + 'px';
+    div.style.height = rect.height + 'px';
+    return div;
+  }
+
+  /* 判断某个节点是否在高亮范围内（排除代码块和顶栏，避免干扰阅读） */
+  function isInArticle(node) {
+    if (!node) return false;
+    let el = node.nodeType === 1 ? node : node.parentElement;
+    if (!el) return false;
+    /* 排除顶栏、页脚、代码块、按钮等非正文内容 */
+    if (el.closest('header, footer, .codeblock, .dock, .gh-link, button')) return false;
+    return el.closest('main') !== null;
+  }
+
+  function drawHighlights(state) {
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed || selection.rangeCount === 0) {
+      clearHighlights();
+      return;
+    }
+
+    const range = selection.getRangeAt(0);
+    if (!isInArticle(range.commonAncestorContainer)) {
+      clearHighlights();
+      return;
+    }
+
+    const rects = range.getClientRects();
+    if (!rects.length) {
+      clearHighlights();
+      return;
+    }
+
+    const need = [];
+    for (const rect of rects) {
+      if (rect.width === 0 || rect.height === 0) continue;
+      need.push(rect);
+    }
+
+    if (currentRects.length !== need.length) {
+      clearHighlights();
+      for (const rect of need) {
+        const div = createRect(rect, state);
+        layer.appendChild(div);
+        currentRects.push(div);
+      }
+      requestAnimationFrame(() => {
+        currentRects.forEach(el => {
+          el.classList.remove('dragging', 'selected');
+          el.classList.add(state);
+        });
+      });
+    } else {
+      need.forEach((rect, i) => {
+        const el = currentRects[i];
+        el.style.left = rect.left + 'px';
+        el.style.top = rect.top + 'px';
+        el.style.width = rect.width + 'px';
+        el.style.height = rect.height + 'px';
+        el.classList.remove('dragging', 'selected');
+        el.classList.add(state);
+      });
+    }
+  }
+
+  function scheduleDraw(state) {
+    if (rafId) cancelAnimationFrame(rafId);
+    rafId = requestAnimationFrame(() => drawHighlights(state));
+  }
+
+  /* 鼠标按下：开始拖动 */
+  document.addEventListener('mousedown', (e) => {
+    if (!isInArticle(e.target)) {
+      clearHighlights();
+      window.getSelection()?.removeAllRanges();
+      return;
+    }
+    isDragging = true;
+    scheduleDraw('dragging');
+  });
+
+  /* 拖动中持续更新 */
+  document.addEventListener('mousemove', () => {
+    if (!isDragging) return;
+    scheduleDraw('dragging');
+  });
+
+  /* 松开：切换到普通选中 */
+  document.addEventListener('mouseup', () => {
+    if (!isDragging) return;
+    isDragging = false;
+
+    const selection = window.getSelection();
+    if (!selection || selection.isCollapsed) {
+      clearHighlights();
+      return;
+    }
+    currentRects.forEach(el => {
+      el.classList.remove('dragging');
+      el.classList.add('selected');
+    });
+  });
+
+  /* 键盘选择（Shift + 方向键）也支持 */
+  document.addEventListener('keyup', () => {
+    if (!isDragging) scheduleDraw('selected');
+  });
+
+  /* 滚动/缩放时重绘 */
+  window.addEventListener('scroll', () => {
+    scheduleDraw(isDragging ? 'dragging' : 'selected');
+  }, true);
+  window.addEventListener('resize', () => {
+    scheduleDraw(isDragging ? 'dragging' : 'selected');
+  });
+
+  /* 点击任意位置取消选中 */
+  document.addEventListener('click', (e) => {
+    const selection = window.getSelection();
+    const hasSelection = selection && !selection.isCollapsed;
+
+    if (!hasSelection) {
+      clearHighlights();
+      return;
+    }
+
+    if (!isInArticle(e.target)) {
+      clearHighlights();
+      selection.removeAllRanges();
+    }
+  });
+</script>
 </body>
 </html>
